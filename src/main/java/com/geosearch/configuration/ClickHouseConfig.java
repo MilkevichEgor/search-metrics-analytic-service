@@ -1,9 +1,6 @@
 package com.geosearch.configuration;
 
-import com.geosearch.entity.SearchAnalytic;
-import com.geosearch.entity.clickhouse.SearchAnalyticClickhouse;
-import com.zaxxer.hikari.HikariDataSource;
-import java.util.HashMap;
+import com.geosearch.clickhouse.SearchAnalyticClickhouse;
 import java.util.Objects;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +44,7 @@ public class ClickHouseConfig {
 	  EntityManagerFactoryBuilder builder) {
 	return builder
 		.dataSource(dataSource)
-		.packages("com.geosearch.clickhouse") // Укажите пакет с сущностями для ClickHouse
+		.packages("com.geosearch.clickhouse")
 		.persistenceUnit("clickhouse")
 		.build();
   }

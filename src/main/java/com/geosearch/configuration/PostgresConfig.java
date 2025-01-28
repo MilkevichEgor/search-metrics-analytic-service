@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-	basePackageClasses = SearchAnalytic.class,
+	basePackages = "com.geosearch.repository",
 	entityManagerFactoryRef = "postgresEntityManagerFactory",
 	transactionManagerRef = "postgresTransactionManager"
 )
@@ -41,27 +41,29 @@ public class PostgresConfig {
 		.build();
   }
 
-  @Bean
+  @Bean(name = "postgresEntityManagerFactory")
   @Primary
   public LocalContainerEntityManagerFactoryBean postgresEntityManagerFactory(
 	  @Qualifier("postgresDataSource") DataSource dataSource,
 	  EntityManagerFactoryBuilder builder) {
 	return builder
 		.dataSource(dataSource)
-		.packages(SearchAnalytic.class)
+		.packages("com.geosearch.entity")
+		.persistenceUnit("postgres")
 		.build();
   }
 
+  @Bean(name = "postgresTransactionManager")
+  @Primary
+  public PlatformTransactionManager postgresTransactionManager(
+	  @Qualifier("postgresEntityManagerFactory") LocalContainerEntityManagerFactoryBean factory) {
+	return new JpaTransactionManager(Objects.requireNonNull(factory.getObject()));
+  }
+
+  @Primary
   @Bean(name = "postgresJdbcTemplate")
   public JdbcTemplate postgresJdbcTemplate(@Qualifier("postgresDataSource") DataSource dataSource) {
 	return new JdbcTemplate(dataSource);
-  }
-
-  @Bean
-  @Primary
-  public PlatformTransactionManager postgresTransactionManager(
-	  @Qualifier("postgresEntityManagerFactory") LocalContainerEntityManagerFactoryBean todosEntityManagerFactory) {
-	return new JpaTransactionManager(Objects.requireNonNull(todosEntityManagerFactory.getObject()));
   }
 
 }

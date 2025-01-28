@@ -1,4 +1,4 @@
-package com.geosearch.entity.clickhouse;
+package com.geosearch.clickhouse;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

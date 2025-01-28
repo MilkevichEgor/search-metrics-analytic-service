@@ -5,6 +5,8 @@ spring:
   application:
     name: analytics-service
   jpa:
+    hibernate:
+      ddl-auto: create-drop
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     postgres:
@@ -12,6 +14,7 @@ spring:
       driver-class-name: org.postgresql.Driver
       username: egor
       password: fusion
+
     clickhouse:
       url: jdbc:ch://localhost:8123/analyticdb
       username: egor

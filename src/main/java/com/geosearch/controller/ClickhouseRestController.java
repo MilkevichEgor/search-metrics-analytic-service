@@ -1,9 +1,8 @@
 package com.geosearch.controller;
 
 import com.geosearch.dto.request.AnalyticCreateRequest;
-import com.geosearch.entity.clickhouse.SearchAnalyticClickhouse;
+import com.geosearch.clickhouse.SearchAnalyticClickhouse;
 import java.time.format.DateTimeFormatter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
