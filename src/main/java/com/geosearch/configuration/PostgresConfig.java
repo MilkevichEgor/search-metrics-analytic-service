@@ -26,12 +26,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 )
 public class PostgresConfig {
 
-	@Bean
-	@Primary
-	@ConfigurationProperties("spring.datasource")
-	public DataSourceProperties postgresDataSourceProperties() {
-	  return new DataSourceProperties();
-	}
+  @Bean
+  @Primary
+  @ConfigurationProperties("spring.datasource.postgres")
+  public DataSourceProperties postgresDataSourceProperties() {
+	return new DataSourceProperties();
+  }
 
   @Bean(name = "postgresDataSource")
   @Primary
@@ -41,27 +41,27 @@ public class PostgresConfig {
 		.build();
   }
 
-	@Bean
-	@Primary
-	public LocalContainerEntityManagerFactoryBean postgresEntityManagerFactory(
-		@Qualifier("postgresDataSource") DataSource dataSource,
-		EntityManagerFactoryBuilder builder) {
-	  return builder
-		  .dataSource(dataSource)
-		  .packages(SearchAnalytic.class)
-		  .build();
-	}
+  @Bean
+  @Primary
+  public LocalContainerEntityManagerFactoryBean postgresEntityManagerFactory(
+	  @Qualifier("postgresDataSource") DataSource dataSource,
+	  EntityManagerFactoryBuilder builder) {
+	return builder
+		.dataSource(dataSource)
+		.packages(SearchAnalytic.class)
+		.build();
+  }
 
   @Bean(name = "postgresJdbcTemplate")
   public JdbcTemplate postgresJdbcTemplate(@Qualifier("postgresDataSource") DataSource dataSource) {
 	return new JdbcTemplate(dataSource);
   }
 
-	@Bean
-	@Primary
-	public PlatformTransactionManager postgresTransactionManager(
-		@Qualifier("postgresEntityManagerFactory") LocalContainerEntityManagerFactoryBean todosEntityManagerFactory) {
-	  return new JpaTransactionManager(Objects.requireNonNull(todosEntityManagerFactory.getObject()));
-	}
-
+  @Bean
+  @Primary
+  public PlatformTransactionManager postgresTransactionManager(
+	  @Qualifier("postgresEntityManagerFactory") LocalContainerEntityManagerFactoryBean todosEntityManagerFactory) {
+	return new JpaTransactionManager(Objects.requireNonNull(todosEntityManagerFactory.getObject()));
   }
+
+}

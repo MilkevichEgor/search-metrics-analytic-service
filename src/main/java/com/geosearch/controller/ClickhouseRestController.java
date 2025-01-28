@@ -30,9 +30,9 @@ public class ClickhouseRestController {
 			INSERT INTO search_analytic (id, search_type, created_at, updated_at)
 			        VALUES (?, ?, ?, ?);
 			""",
-		analyticClickhouse.id().toString(), // Преобразование UUID в строку
+		analyticClickhouse.id().toString(),
 		analyticClickhouse.searchType(),
-		analyticClickhouse.createdAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), // Форматирование даты
+		analyticClickhouse.createdAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
 		analyticClickhouse.updatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 	);
   }

@@ -1,8 +1,10 @@
 package com.geosearch.configuration;
 
+import com.geosearch.entity.SearchAnalytic;
 import com.geosearch.entity.clickhouse.SearchAnalyticClickhouse;
 import com.zaxxer.hikari.HikariDataSource;
 import java.util.HashMap;
+import java.util.Objects;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -12,43 +14,52 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+@Configuration
+@EnableTransactionManagement
 @EnableJpaRepositories(
-	entityManagerFactoryRef = "clickhouseEM",
-	basePackageClasses = SearchAnalyticClickhouse.class)
-@Configuration(proxyBeanMethods = false)
+	basePackageClasses = SearchAnalyticClickhouse.class,
+	entityManagerFactoryRef = "clickhouseEntityManagerFactory",
+	transactionManagerRef = "clickhouseTransactionManager"
+)
 public class ClickHouseConfig {
 
   @Bean
   @ConfigurationProperties("spring.datasource.clickhouse")
-  public DataSourceProperties clickhouseDbProperties() {
+  public DataSourceProperties clickhouseDataSourceProperties() {
 	return new DataSourceProperties();
   }
 
-  @Bean
-  @ConfigurationProperties("spring.datasource.clickhouse.hikari")
-  public HikariDataSource clickhouseDataSource(
-	  DataSourceProperties clickhouseDbProperties) {
-	return clickhouseDbProperties
+  @Bean(name = "clickhouseDataSource")
+  public DataSource clickhouseDataSource() {
+	return clickhouseDataSourceProperties()
 		.initializeDataSourceBuilder()
-		.type(HikariDataSource.class)
 		.build();
   }
 
-  @Bean(name = "clickhouseEM")
+  @Bean(name = "clickhouseEntityManagerFactory")
   public LocalContainerEntityManagerFactoryBean clickhouseEntityManagerFactory(
-	  EntityManagerFactoryBuilder builder, DataSource clickhouseDataSource) {
-	HashMap<String, Object> properties = new HashMap<>();
+	  @Qualifier("clickhouseDataSource") DataSource dataSource,
+	  EntityManagerFactoryBuilder builder) {
 	return builder
-		.dataSource(clickhouseDataSource)
-		.properties(properties)
-		.packages(SearchAnalyticClickhouse.class)
+		.dataSource(dataSource)
+		.packages("com.geosearch.clickhouse") // Укажите пакет с сущностями для ClickHouse
+		.persistenceUnit("clickhouse")
 		.build();
   }
 
   @Bean(name = "clickhouseJdbcTemplate")
-  public JdbcTemplate clickhouseJdbcTemplate(@Qualifier("clickhouseDataSource") DataSource dataSource) {
+  public JdbcTemplate postgresJdbcTemplate(@Qualifier("clickhouseDataSource") DataSource dataSource) {
 	return new JdbcTemplate(dataSource);
+  }
+
+  @Bean(name = "clickhouseTransactionManager")
+  public PlatformTransactionManager clickhouseTransactionManager(
+	  @Qualifier("clickhouseEntityManagerFactory") LocalContainerEntityManagerFactoryBean factory) {
+	return new JpaTransactionManager(Objects.requireNonNull(factory.getObject()));
   }
 }

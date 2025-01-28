@@ -6,24 +6,14 @@ spring:
     name: analytics-service
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
-
-  #  datasource:
-  #    url: jdbc:postgresql://localhost:5432/elastic-db
-  #    driver-class-name: org.postgresql.Driver
-  #    username: egor
-  #    password: fusion
-
-  postgres:
-    datasource:
+  datasource:
+    postgres:
       url: jdbc:postgresql://localhost:5433/analytics-db
       driver-class-name: org.postgresql.Driver
       username: egor
       password: fusion
-
-  datasource:
-#    clickhouse:
-      url: jdbc:ch://localhost:8123/analyticdb  # Обратите внимание на правильный формат URL
+    clickhouse:
+      url: jdbc:ch://localhost:8123/analyticdb
       username: egor
       password: fusion
       driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
