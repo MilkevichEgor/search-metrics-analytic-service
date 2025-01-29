@@ -2,7 +2,7 @@ services:
   clickhouse-db:
     image: clickhouse/clickhouse-server:24.12.3
     environment:
-      - CLICKHOUSE_DB=analyticdb
+      - CLICKHOUSE_DB=clickhousedb
       - CLICKHOUSE_USER=egor
       - CLICKHOUSE_PASSWORD=fusion
     ulimits:

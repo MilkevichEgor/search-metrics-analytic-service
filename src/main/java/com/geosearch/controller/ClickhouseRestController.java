@@ -2,9 +2,13 @@ package com.geosearch.controller;
 
 import com.geosearch.dto.request.AnalyticCreateRequest;
 import com.geosearch.clickhouse.SearchAnalyticClickhouse;
+import com.geosearch.entity.SearchAnalytic;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -6,7 +6,7 @@ spring:
     name: analytics-service
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
     postgres:
@@ -16,7 +16,7 @@ spring:
       password: fusion
 
     clickhouse:
-      url: jdbc:ch://localhost:8123/analyticdb
+      url: jdbc:ch://localhost:8123/clickhousedb
       username: egor
       password: fusion
       driver-class-name: com.clickhouse.jdbc.ClickHouseDriver

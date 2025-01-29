@@ -3,11 +3,15 @@ package com.geosearch.entity;
 import com.geosearch.constant.SearchType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,13 +23,14 @@ import org.hibernate.proxy.HibernateProxy;
 @AllArgsConstructor
 @Getter
 @Setter
+@Table(name = "search")
 public class SearchAnalytic {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
-  private Long id;
+  private UUID id;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
+  @Enumerated(EnumType.STRING)
   private SearchType searchType;
 
   @Override
