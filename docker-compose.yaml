@@ -1,4 +1,22 @@
 services:
+
+  analytics-service:
+#    image: analytics-service:latest
+    build:
+      context: .
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: "no"
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - network
+
   clickhouse-db:
     image: clickhouse/clickhouse-server:24.12.3
     environment:
@@ -10,11 +28,13 @@ services:
         soft: 262144
         hard: 262144
     ports:
-      - 8123:8123
-      - 9000:9000
+      - "8123:8123"
+      - "9000:9000"
+    networks:
+      - network
 
   kafka:
-    image: confluentinc/cp-kafka:7.8.0
+    image: confluentinc/cp-kafka:7.9.0
     restart: "no"
     ports:
       - "29092:29092"
@@ -22,7 +42,7 @@ services:
     volumes:
       - kafka_data:/var/lib/kafka/data
     environment:
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
@@ -31,23 +51,25 @@ services:
       KAFKA_PROCESS_ROLES: controller,broker
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://0.0.0.0:9092,CONTROLLER://kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://kafka:9092,CONTROLLER://kafka:9093
     healthcheck:
-      test: kafka-topics --bootstrap-server localhost:9092 --list
+      test: kafka-topics --bootstrap-server kafka:9092 --list
       interval: 10s
       timeout: 5s
       start_period: 30s
       retries: 5
+    networks:
+      - network
 
   kafka-ui:
-    image: provectuslabs/kafka-ui:v0.7.1
+    image: provectuslabs/kafka-ui:v0.7.2
     restart: "no"
     ports:
       - "8989:8080"
     environment:
       DYNAMIC_CONFIG_ENABLED: "true"
       KAFKA_CLUSTERS_0_NAME: B4Cs0z61TTSuASkdVw_vkA
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit -1
       interval: 10s
@@ -56,10 +78,12 @@ services:
       retries: 5
     depends_on:
       - kafka
-
+    networks:
+      - network
 
   postgres:
     image: postgres:17.2
+    container_name: analytic-db
     restart: "no"
     ports:
       - "5433:5432"
@@ -75,6 +99,13 @@ services:
       timeout: 5s
       start_period: 10s
       retries: 5
+    networks:
+      - network
+
 volumes:
   postgres_data:
   kafka_data:
+networks:
+  network:
+    name: test-network
+    external: true

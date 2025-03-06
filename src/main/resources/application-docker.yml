@@ -1,0 +1,36 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: analytics-service
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    postgres:
+      url: jdbc:postgresql://postgres:5432/analytics-db
+      driver-class-name: org.postgresql.Driver
+      username: egor
+      password: fusion
+
+    clickhouse:
+      url: jdbc:ch://clickhouse-db:8123/clickhousedb
+      username: egor
+      password: fusion
+      driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
+      hikari:
+        maximum-pool-size: 10
+        minimum-idle: 5
+        idle-timeout: 30000
+        max-lifetime: 600000
+        connection-timeout: 30000
+  #    jpa:
+  #
+  kafka:
+    bootstrap-servers: kafka:9092
+
+logging:
+  level:
+    org.springframework.jdbc.core: DEBUG
