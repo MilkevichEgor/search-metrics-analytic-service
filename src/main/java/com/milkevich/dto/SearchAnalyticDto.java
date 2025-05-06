@@ -8,5 +8,5 @@ import java.util.UUID;
 /**
  * DTO for {@link SearchAnalytic}
  */
-public record SearchAnalyticDto(UUID id, SearchType searchType, LocalDateTime createdAt, LocalDateTime updatedAt) {
+public record SearchAnalyticDto(UUID id, LocalDateTime createdAt, LocalDateTime updatedAt, SearchType searchType) {
 }
